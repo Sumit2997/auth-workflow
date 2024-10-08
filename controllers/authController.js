@@ -95,9 +95,10 @@ const login = async (req, res) => {
   const ip = req.ip;
   const userToken = { refreshToken, userAgent, ip, user: user._id };
 
-  const token = await Token.create(userToken);
-  // attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.OK).json({ user: tokenUser, token });
+  await Token.create(userToken);
+
+  attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
 const logout = async (req, res) => {
