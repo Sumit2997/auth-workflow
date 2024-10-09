@@ -95,7 +95,9 @@ const login = async (req, res) => {
   if (existingToken) {
     const { isValid } = existingToken;
     if (!isValid) {
-      throw new CustomError.UnauthenticatedError("existingToken Invalid Credentials");
+      throw new CustomError.UnauthenticatedError(
+        "existingToken Invalid Credentials"
+      );
     }
     refreshToken = existingToken.refreshToken;
     attachCookiesToResponse({ res, user: tokenUser, refreshToken });
@@ -115,7 +117,7 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  await Token.findOneAndDelete({user:req.user.userId})
+  await Token.findOneAndDelete({ user: req.user.userId });
 
   res.cookie("accessToken", "logout", {
     httpOnly: true,
@@ -128,9 +130,19 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
+const forgotPassword = async (req, res) => {
+  res.send("forgot password");
+};
+
+const resetPassword = async (req, res) => {
+  res.send("reset password");
+};
+
 module.exports = {
   register,
   login,
   logout,
   verifyEmail,
+  forgotPassword,
+  resetPassword,
 };
