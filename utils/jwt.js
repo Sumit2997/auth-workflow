@@ -8,7 +8,7 @@ const createJWT = ({ payload }) => {
 const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
 const attachCookiesToResponse = ({ res, user, refreshToken }) => {
-  const accessTokenJWT = createJWT({ payload: user });
+  const accessTokenJWT = createJWT({ payload: { user } });
   const refreshTokenJWT = createJWT({ payload: { user, refreshToken } });
 
   const oneDay = 1000 * 60 * 60 * 24;
@@ -28,7 +28,7 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
     expires: new Date(Date.now() + longerExp),
   });
 };
-// const attachSingleCookiesToResponse = ({ res, user }) => {
+// const attachSingleCookieToResponse = ({ res, user }) => {
 //   const token = createJWT({ payload: user });
 
 //   const oneDay = 1000 * 60 * 60 * 24;
