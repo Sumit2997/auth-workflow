@@ -130,8 +130,30 @@ const logout = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
 
-const forgotPassword = async (req, res) => {
-  res.send("forgot password");
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new CustomError.BadRequestError("provide email");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const passwordToken = crypto.randomBytes(70).toString("hex");
+
+    const tenMinutes = 1000 * 60 * 10;
+    const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+
+    user.passwordToken = passwordToken;
+    user.passwordTokenExpirationDate = passwordTokenExpirationDate;
+
+    await user.save();
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "please check your email for password reset" });
 };
 
 const resetPassword = async (req, res) => {
@@ -143,6 +165,6 @@ module.exports = {
   login,
   logout,
   verifyEmail,
-  forgotPassword,
+  forgetPassword,
   resetPassword,
 };
