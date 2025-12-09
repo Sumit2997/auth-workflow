@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 
-const SingleOrderItemSchema = mongoose.Schema({
+const SinglesummaryItemSchema = mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
   amount: { type: Number, required: true },
   product: {
     type: mongoose.Schema.ObjectId,
-    ref: "Product",
+    ref: "Flashcard",
     required: true,
   },
 });
 
-const OrderSchema = mongoose.Schema(
+const summarySchema = mongoose.Schema(
   {
     tax: {
       type: Number,
@@ -30,7 +30,7 @@ const OrderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    orderItems: [SingleOrderItemSchema],
+    summaryItems: [SinglesummaryItemSchema],
     status: {
       type: String,
       enum: ["pending", "failed", "paid", "delivered", "canceled"],
@@ -52,4 +52,4 @@ const OrderSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Order", OrderSchema);
+module.exports = mongoose.model("summary", summarySchema);

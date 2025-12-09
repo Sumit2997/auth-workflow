@@ -23,19 +23,19 @@ const ReviewSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    product: {
+    flashcard: {
       type: mongoose.Schema.ObjectId,
-      ref: "Product",
+      ref: "flashcard",
       required: true,
     },
   },
   { timestamps: true }
 );
-ReviewSchema.index({ product: 1, user: 1 }, { unique: true });
+ReviewSchema.index({ flashcard: 1, user: 1 }, { unique: true });
 
-ReviewSchema.statics.calculateAverageRating = async function (productId) {
+ReviewSchema.statics.calculateAverageRating = async function (flashcardId) {
   const result = await this.aggregate([
-    { $match: { product: productId } },
+    { $match: { flashcard: flashcardId } },
     {
       $group: {
         _id: null,
@@ -46,8 +46,8 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
   ]);
 
   try {
-    await this.model("Product").findOneAndUpdate(
-      { _id: productId },
+    await this.model("flashcard").findOneAndUpdate(
+      { _id: flashcardId },
       {
         averageRating: Math.ceil(result[0]?.averageRating || 0),
         numOfReviews: result[0]?.numOfReviews || 0,
@@ -59,11 +59,11 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
 };
 
 ReviewSchema.post("save", async function () {
-  await this.constructor.calculateAverageRating(this.product);
+  await this.constructor.calculateAverageRating(this.flashcard);
 });
 
 ReviewSchema.post("remove", async function () {
-  await this.constructor.calculateAverageRating(this.product);
+  await this.constructor.calculateAverageRating(this.flashcard);
 });
 
 module.exports = mongoose.model("Review", ReviewSchema);
